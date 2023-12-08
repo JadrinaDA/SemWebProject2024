@@ -3,11 +3,12 @@ package semweb_project2;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -109,17 +110,24 @@ public class collect {
 		            				for (Object openingHoursObject : openingHoursArray) {
 		                                JSONObject openingHours = (JSONObject) openingHoursObject;
 		                                List<String> days = (List<String>) openingHours.get("dayOfWeek");
-		                                String opens = (String) openingHours.get("opens");
-		                                String closes = (String) openingHours.get("closes");
-
+		                                LocalTime opens = LocalTime.parse((String)openingHours.get("opens"));
+		                                LocalTime closes = LocalTime.parse((String)openingHours.get("closes"));
+		                                
 		                                // Format opening hours for each day
-		                                String oH = "";
+		                                
 		                                for (String day : days) {
-		                                    oH += day.substring(0, 2) + ",";
+		                                	Resource ohSpec = model.createResource()
+			                                		 .addProperty(RDF.type, model.createResource(schema+"OpeningHoursSpecification"))
+			                                		 .addProperty(model.createProperty(schema+"opens"), model.createTypedLiteral(opens, XSDDatatype.XSDtime))
+			                                		 .addProperty(model.createProperty(schema+"closes"), model.createTypedLiteral(closes, XSDDatatype.XSDtime));
+			                
+
+		                                	ohSpec.addProperty(model.createProperty(schema+"dayOfWeek"), day);
+		                                	serv.addProperty(model.createProperty(schema+"openingHoursSpecification"), ohSpec);
 		                                }
-		                                String formattedHours = String.format("%s %s-%s", oH , opens, closes);
-		                                serv.addProperty(model.createProperty(schema+"openingHours"), formattedHours);
+		                                
 		                            }
+		            				
 		            				
 		                           
 		                            
@@ -173,7 +181,7 @@ public class collect {
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
-		RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
+		//RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
 		//conneg.load(model); // add the content of model to the triplestore	
 
 
