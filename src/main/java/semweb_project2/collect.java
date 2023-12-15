@@ -110,16 +110,16 @@ public class collect {
 		            				for (Object openingHoursObject : openingHoursArray) {
 		                                JSONObject openingHours = (JSONObject) openingHoursObject;
 		                                List<String> days = (List<String>) openingHours.get("dayOfWeek");
-		                                LocalTime opens = LocalTime.parse((String)openingHours.get("opens"));
-		                                LocalTime closes = LocalTime.parse((String)openingHours.get("closes"));
+		                                String opens = "1999-04-09T" + (String)openingHours.get("opens") + ":00";
+		                                String closes = "1999-04-09T" + (String)openingHours.get("closes") +":00";
 		                                
 		                                // Format opening hours for each day
 		                                
 		                                for (String day : days) {
 		                                	Resource ohSpec = model.createResource()
 			                                		 .addProperty(RDF.type, model.createResource(schema+"OpeningHoursSpecification"))
-			                                		 .addProperty(model.createProperty(schema+"opens"), model.createTypedLiteral(opens, XSDDatatype.XSDtime))
-			                                		 .addProperty(model.createProperty(schema+"closes"), model.createTypedLiteral(closes, XSDDatatype.XSDtime));
+			                                		 .addProperty(model.createProperty(schema+"opens"), model.createTypedLiteral(opens, XSDDatatype.XSDdateTime))
+			                                		 .addProperty(model.createProperty(schema+"closes"), model.createTypedLiteral(closes, XSDDatatype.XSDdateTime));
 			                
 
 		                                	ohSpec.addProperty(model.createProperty(schema+"dayOfWeek"), day);
@@ -181,9 +181,13 @@ public class collect {
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
-		//RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
-		//conneg.load(model); // add the content of model to the triplestore	
+		RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
+		conneg.load(model); // add the content of model to the triplestore	
 
+		
+		// <https://schema.org/closes>     "2022-09-12T14:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+        //<https://schema.org/dayOfWeek>  "Saturday";
+        //<https://schema.org/opens>      "2022-09-12T08:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
 
 		
 	}
