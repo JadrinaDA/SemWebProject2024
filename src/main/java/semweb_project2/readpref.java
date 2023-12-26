@@ -15,7 +15,7 @@ public class readpref {
         model.write(System.out);
         
         
-        System.out.print(userLon.getURI());
+        //System.out.print(userLon.getURI());
 
 
 	}

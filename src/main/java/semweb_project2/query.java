@@ -30,7 +30,8 @@ public class query {
                              "                 schema:longitude ?long;" +
                              "                 schema:latitude ?lat;" +
                              "             ];" +
-                             "            schema:name ?storeName ." +
+                             "            schema:name ?storeName ;" +
+                             "            schema:priceRange ?price ." +
                              "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
                              "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) > userMinute) )" +
                              "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) < userMinute) )" +
@@ -49,7 +50,6 @@ public class query {
 	    String day = scan.nextLine();  // Read user input
 	    System.out.println("Enter time (hh:mm)");
 	    String time = scan.nextLine();
-	    scan.close();
 	    String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 		String userDayOfWeek = daysOfWeek[Integer.parseInt(day)];
 		String userHour = time.split(":")[0];
@@ -69,6 +69,9 @@ public class query {
 	    String temprad = scan.nextLine();
 		Integer radius = Integer.parseInt(temprad);
 		Double cos = Math.cos(userLat * Math.PI /180);
+		System.out.println("Enter maximum price");
+		String userLim = scan.nextLine();
+		scan.close();
 		
 		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
 				// Set the user input as parameters in the query
@@ -79,6 +82,7 @@ public class query {
 	            queryString = queryString.replaceAll("userLon", Double.toString(userLon));
 	            queryString = queryString.replaceAll("cos", Double.toString(cos));
 	            queryString = queryString.replaceAll("disSq", Integer.toString(radius^2));
+	            queryString = queryString.replaceAll("userLim", userLim);
 	            QueryExecution qExec = conn.query(queryString) ;
 				ResultSet rs = qExec.execSelect() ;
 				while(rs.hasNext()) {
@@ -92,33 +96,3 @@ public class query {
 	}
 
 }
-
-//
-//
-//    "description": "Ici tout est fait maison avec des produits frais et locaux ou import\u00e9s directement  d'Italie.\r\nNotre Ristorante Italien Chez Rosa, vous accueillera dans une ambiance conviviale et familiale.\r\nVous pourrez y d\u00e9guster de d\u00e9licieuses pizzas et sp\u00e9cialit\u00e9s Italiennes.",
-//    "potentialAction": {
-//        "@type": "OrderAction",
-//        "target": {
-//            "@type": "EntryPoint",
-//            "urlTemplate": "https://beefast.coopcycle.org/fr/restaurant/34-chez-rosa",
-//            "inLanguage": "fr",
-//            "actionPlatform": [
-//                "http://schema.org/DesktopWebPlatform"
-//            ]
-//        },
-//        "deliveryMethod": [
-//            "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
-//        ],
-//        "priceSpecification": {
-//            "@type": "DeliveryChargeSpecification",
-//            "appliesToDeliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
-//            "priceCurrency": "EUR",
-//            "price": "3.50",
-//            "eligibleTransactionVolume": {
-//                "@type": "PriceSpecification",
-//                "priceCurrency": "EUR",
-//                "price": "12.00"
-//            }
-//        }
-//    }
-//}
