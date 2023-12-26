@@ -26,10 +26,16 @@ public class query {
                              "              schema:closes ?closes ;" +
                              "              schema:dayOfWeek ?dayOfWeek" +
                              "            ] ;" +
+                             "schema:location [" +
+                             "                 schema:longitude ?long;" +
+                             "                 schema:latitude ?lat;" +
+                             "             ];" +
                              "            schema:name ?storeName ." +
                              "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
                              "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) > userMinute) )" +
                              "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) < userMinute) )" +
+                             "  FILTER (((?lat - userLat)*110.574)*((?lat - userLat)*110.574) +  ((?long - userLon)*111.32*cos)*((?long - userLon)*111.32*0.75)  < disSq)" +
+                             "  FILTER (?price <= userLim)" +
                              "} ORDER BY ?storeName";
 		
 		String datasetURL = "http://localhost:3030/coopcycle_dataset";
@@ -49,11 +55,30 @@ public class query {
 		String userHour = time.split(":")[0];
 		String userMinute = time.split(":")[1];
 		System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);  // Output user input
+		
+		System.out.println("Enter your latitude (float)");
+	    String templat = scan.nextLine();
+	    System.out.println("Enter your longitude (float)");
+	    String templon = scan.nextLine();
+		Double userLat = Double.parseDouble(templat);
+		Double userLon = Double.parseDouble(templon);
+		// We made the following assumptions based on an internet search and testing on google maps
+		// 1 degree of lat = 110.547
+		// 1 degree of lon = 111.32 * cos(lat)
+		System.out.println("Enter maximum distance/radius");
+	    String temprad = scan.nextLine();
+		Integer radius = Integer.parseInt(temprad);
+		Double cos = Math.cos(userLat * Math.PI /180);
+		
 		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
 				// Set the user input as parameters in the query
 	            queryString = queryString.replaceAll("userDayOfWeek", userDayOfWeek);
 	            queryString = queryString.replaceAll("userHour", userHour);
 	            queryString = queryString.replaceAll("userMinute", userMinute);
+	            queryString = queryString.replaceAll("userLat", Double.toString(userLat));
+	            queryString = queryString.replaceAll("userLon", Double.toString(userLon));
+	            queryString = queryString.replaceAll("cos", Double.toString(cos));
+	            queryString = queryString.replaceAll("disSq", Integer.toString(radius^2));
 	            QueryExecution qExec = conn.query(queryString) ;
 				ResultSet rs = qExec.execSelect() ;
 				while(rs.hasNext()) {
@@ -67,3 +92,33 @@ public class query {
 	}
 
 }
+
+//
+//
+//    "description": "Ici tout est fait maison avec des produits frais et locaux ou import\u00e9s directement  d'Italie.\r\nNotre Ristorante Italien Chez Rosa, vous accueillera dans une ambiance conviviale et familiale.\r\nVous pourrez y d\u00e9guster de d\u00e9licieuses pizzas et sp\u00e9cialit\u00e9s Italiennes.",
+//    "potentialAction": {
+//        "@type": "OrderAction",
+//        "target": {
+//            "@type": "EntryPoint",
+//            "urlTemplate": "https://beefast.coopcycle.org/fr/restaurant/34-chez-rosa",
+//            "inLanguage": "fr",
+//            "actionPlatform": [
+//                "http://schema.org/DesktopWebPlatform"
+//            ]
+//        },
+//        "deliveryMethod": [
+//            "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
+//        ],
+//        "priceSpecification": {
+//            "@type": "DeliveryChargeSpecification",
+//            "appliesToDeliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
+//            "priceCurrency": "EUR",
+//            "price": "3.50",
+//            "eligibleTransactionVolume": {
+//                "@type": "PriceSpecification",
+//                "priceCurrency": "EUR",
+//                "price": "12.00"
+//            }
+//        }
+//    }
+//}
