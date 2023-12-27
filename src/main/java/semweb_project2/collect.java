@@ -190,8 +190,8 @@ public class collect {
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
-		//RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
-		//conneg.load(model); // add the content of model to the triplestore	
+		RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
+		conneg.load(model); // add the content of model to the triplestore	
 
 		
 		// <https://schema.org/closes>     "2022-09-12T14:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
