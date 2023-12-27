@@ -32,13 +32,24 @@ public class query {
                              "             ];" +
                              "            schema:name ?storeName ;" +
                              "            schema:priceRange ?price ." +
+                             "  BIND (((?lat - 49.89)*110.574)*((?lat - 49.89)*110.574) +  ((?long - 2.26)*111.32*0.6442571239197948)*((?long - 2.26)*111.32*0.6442571239197948) as ?dist)" +
                              "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
-                             "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) > userMinute) )" +
-                             "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) < userMinute) )" +
-                             "  FILTER (((?lat - userLat)*110.574)*((?lat - userLat)*110.574) +  ((?long - userLon)*111.32*cos)*((?long - userLon)*111.32*0.75)  < disSq)" +
-                             "  FILTER (?price <= userLim)" +
-                             "} ORDER BY ?storeName";
-		
+                             "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
+                             "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )" +
+                             "  FILTER (?dist  < disSq)" +
+                             "  FILTER (?price <= userLim)";
+        if (args[1].equals("price"))
+			{
+			  queryString +=  "} ORDER BY ?price";	
+			}
+        else if (args[1].equals("distance"))
+		{
+			queryString +=  "} ORDER BY ?distance";
+		}
+		else
+		{
+			 queryString += "} ORDER BY ?storeName";
+		}
 		String datasetURL = "http://localhost:3030/coopcycle_dataset";
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
@@ -69,6 +80,7 @@ public class query {
 	    String temprad = scan.nextLine();
 		Integer radius = Integer.parseInt(temprad);
 		Double cos = Math.cos(userLat * Math.PI /180);
+		System.out.println(cos);
 		System.out.println("Enter maximum price");
 		String userLim = scan.nextLine();
 		scan.close();
@@ -81,8 +93,9 @@ public class query {
 	            queryString = queryString.replaceAll("userLat", Double.toString(userLat));
 	            queryString = queryString.replaceAll("userLon", Double.toString(userLon));
 	            queryString = queryString.replaceAll("cos", Double.toString(cos));
-	            queryString = queryString.replaceAll("disSq", Integer.toString(radius^2));
+	            queryString = queryString.replaceAll("disSq", Integer.toString(radius*radius));
 	            queryString = queryString.replaceAll("userLim", userLim);
+	            System.out.println(queryString);
 	            QueryExecution qExec = conn.query(queryString) ;
 				ResultSet rs = qExec.execSelect() ;
 				while(rs.hasNext()) {

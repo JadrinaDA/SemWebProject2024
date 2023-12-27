@@ -190,8 +190,8 @@ public class collect {
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
-		//RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
-		//conneg.load(model); // add the content of model to the triplestore	
+		RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
+		conneg.load(model); // add the content of model to the triplestore	
 
 		
 		// <https://schema.org/closes>     "2022-09-12T14:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
@@ -203,33 +203,3 @@ public class collect {
 	
 
 }
-
-//
-//
-//    "description": "Ici tout est fait maison avec des produits frais et locaux ou import\u00e9s directement  d'Italie.\r\nNotre Ristorante Italien Chez Rosa, vous accueillera dans une ambiance conviviale et familiale.\r\nVous pourrez y d\u00e9guster de d\u00e9licieuses pizzas et sp\u00e9cialit\u00e9s Italiennes.",
-//    "potentialAction": {
-//        "@type": "OrderAction",
-//        "target": {
-//            "@type": "EntryPoint",
-//            "urlTemplate": "https://beefast.coopcycle.org/fr/restaurant/34-chez-rosa",
-//            "inLanguage": "fr",
-//            "actionPlatform": [
-//                "http://schema.org/DesktopWebPlatform"
-//            ]
-//        },
-//        "deliveryMethod": [
-//            "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
-//        ],
-//        "priceSpecification": {
-//            "@type": "DeliveryChargeSpecification",
-//            "appliesToDeliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
-//            "priceCurrency": "EUR",
-//            "price": "3.50",
-//            "eligibleTransactionVolume": {
-//                "@type": "PriceSpecification",
-//                "priceCurrency": "EUR",
-//                "price": "12.00"
-//            }
-//        }
-//    }
-//}
