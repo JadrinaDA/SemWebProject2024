@@ -74,24 +74,25 @@ public class query {
 		scan.close();
 		
 		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
-				// Set the user input as parameters in the query
-	            queryString = queryString.replaceAll("userDayOfWeek", userDayOfWeek);
-	            queryString = queryString.replaceAll("userHour", userHour);
-	            queryString = queryString.replaceAll("userMinute", userMinute);
-	            queryString = queryString.replaceAll("userLat", Double.toString(userLat));
-	            queryString = queryString.replaceAll("userLon", Double.toString(userLon));
-	            queryString = queryString.replaceAll("cos", Double.toString(cos));
-	            queryString = queryString.replaceAll("disSq", Integer.toString(radius^2));
-	            queryString = queryString.replaceAll("userLim", userLim);
-	            QueryExecution qExec = conn.query(queryString) ;
-				ResultSet rs = qExec.execSelect() ;
-				while(rs.hasNext()) {
-				  QuerySolution qs = rs.next() ;
-				  Resource subject = qs.getResource("storeUri") ;
-				  System.out.println("Subject: " + subject) ;
-				}
-				qExec.close() ;
-				conn.close() ;
+		// Set the user input as parameters in the query
+        queryString = queryString.replaceAll("userDayOfWeek", userDayOfWeek);
+        queryString = queryString.replaceAll("userHour", userHour);
+        queryString = queryString.replaceAll("userMinute", userMinute);
+        queryString = queryString.replaceAll("userLat", Double.toString(userLat));
+        queryString = queryString.replaceAll("userLon", Double.toString(userLon));
+        queryString = queryString.replaceAll("cos", Double.toString(cos));
+        queryString = queryString.replaceAll("disSq", Integer.toString(radius^2));
+        queryString = queryString.replaceAll("userLim", userLim);
+        QueryExecution qExec = conn.query(queryString) ;
+		ResultSet rs = qExec.execSelect() ;
+		while(rs.hasNext()) {
+		  QuerySolution qs = rs.next() ;
+		  Resource subject = qs.getResource("storeUri") ;
+		  System.out.println("Subject: " + subject) ;
+		}
+		System.out.println("Query finished") ;
+		qExec.close() ;
+		conn.close() ;
 
 	}
 
