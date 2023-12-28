@@ -5,8 +5,6 @@ import java.util.Scanner;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 
@@ -44,15 +42,20 @@ public class query {
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
 		
-		UserProfile user = readpref.getUserPreferences();
+		UserProfile user = readpref.getUserPreferences(sparqlEndpoint,sparqlUpdate,graphStore);
+		if (user == null) {
+			System.err.println("user = null");
+			return;
+		}
 		
-		Scanner scan = new Scanner(System.in);  // Create a Scanner object
-	    System.out.println("Welcome back " + user.getUserName() + ". Please, enter day of week as number:");
-	    String day = scan.nextLine();  // Read user input
+		Scanner scan = new Scanner(System.in); 
+		System.out.println("Welcome back " + user.getUserName() + "!");
+	    System.out.println("Please, enter day of week as number:");
+    	String day = scan.nextLine();  
 	    System.out.println("Enter time (hh:mm)");
 	    String time = scan.nextLine();
 	    String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-		String userDayOfWeek = daysOfWeek[Integer.parseInt(day)];
+		String userDayOfWeek = daysOfWeek[(Integer.parseInt(day)-1)];
 		String userHour = time.split(":")[0];
 		String userMinute = time.split(":")[1];
 		System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);  // Output user input
@@ -62,7 +65,6 @@ public class query {
 		Double cos = Math.cos(user.getLatitude() * Math.PI /180);
 		scan.close();
 		
-		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
 		// Set the user input as parameters in the query
         queryString = queryString.replaceAll("userDayOfWeek", userDayOfWeek);
         queryString = queryString.replaceAll("userHour", userHour);
@@ -72,6 +74,7 @@ public class query {
         queryString = queryString.replaceAll("cos", Double.toString(cos));
         queryString = queryString.replaceAll("disSq", Double.toString(Math.pow(user.getGeoRadius(),2)));
         queryString = queryString.replaceAll("userLim", Double.toString(user.getMaxPrice()));
+        RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
         QueryExecution qExec = conn.query(queryString) ;
 		ResultSet rs = qExec.execSelect() ;
 		while(rs.hasNext()) {
@@ -83,5 +86,7 @@ public class query {
 		conn.close() ;
 
 	}
+	
+	
 
 }

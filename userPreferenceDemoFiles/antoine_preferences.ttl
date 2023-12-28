@@ -1,6 +1,6 @@
 <#userAntoine>
     a <http://schema.org/Person> ;
-    <http://schema.org/name> "Victor Charpenay" ;
+    <http://schema.org/name> "Antoine Zimmermann" ;
     <http://schema.org/address> [
         a <http://schema.org/PostalAddress> ;
         <http://schema.org/postalCode> "38250" ;
