@@ -1,28 +1,28 @@
 @prefix schema: <http://schema.org/> .
 @prefix wd: <http://www.wikidata.org/entity/> .
 
-<#me>
+<#userIgnacio>
     a schema:Person ;
-    schema:name "Victor Charpenay" ;
+    schema:name "Ignacio Perez" ;
     schema:address [
         a schema:PostalAddress ;
-        schema:postalCode "38250" ;
-        schema:addressLocality "Corrençon-en-Vercors"
+        schema:postalCode "1842" ;
+        schema:addressLocality "Monte Grande"
     ] ;
     schema:seeks [
         schema:seller <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
         schema:priceSpecification [
-            schema:maxPrice 18.5 ;
+            schema:maxPrice 13 ;
             schema:priceCurrency "EUR"
         ] ;
         schema:availableAtOrFrom [
             schema:geoWithin [
                 a schema:GeoCircle ;
                 schema:geoMidpoint [
-                    schema:longitude 2.42788 ;
-                    schema:latitude 49.40391
+                    schema:longitude 0 ;
+                    schema:latitude 51.51279
                 ] ;
-                schema:geoRadius 2000
+                schema:geoRadius 1500
             ]
         ] ;
         schema:itemOfferred wd:Q177

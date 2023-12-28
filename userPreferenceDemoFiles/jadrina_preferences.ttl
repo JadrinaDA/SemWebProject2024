@@ -1,28 +1,28 @@
 @prefix schema: <http://schema.org/> .
 @prefix wd: <http://www.wikidata.org/entity/> .
 
-<#me>
+<#userJadrina>
     a schema:Person ;
-    schema:name "Victor Charpenay" ;
+    schema:name "Jadrina Andrade" ;
     schema:address [
         a schema:PostalAddress ;
-        schema:postalCode "38250" ;
-        schema:addressLocality "Corrençon-en-Vercors"
+        schema:postalCode "8320000" ;
+        schema:addressLocality "Santiago"
     ] ;
     schema:seeks [
         schema:seller <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
         schema:priceSpecification [
-            schema:maxPrice 18.5 ;
+            schema:maxPrice 15.5 ;
             schema:priceCurrency "EUR"
         ] ;
         schema:availableAtOrFrom [
             schema:geoWithin [
                 a schema:GeoCircle ;
                 schema:geoMidpoint [
-                    schema:longitude 2.42788 ;
-                    schema:latitude 49.40391
+                    schema:longitude -74.00597 ;
+                    schema:latitude 40.71427
                 ] ;
-                schema:geoRadius 2000
+                schema:geoRadius 500
             ]
         ] ;
         schema:itemOfferred wd:Q177

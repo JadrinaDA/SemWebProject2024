@@ -1,7 +1,7 @@
 @prefix schema: <http://schema.org/> .
 @prefix wd: <http://www.wikidata.org/entity/> .
 
-<#me>
+<#userAntoine>
     a schema:Person ;
     schema:name "Victor Charpenay" ;
     schema:address [
@@ -12,17 +12,17 @@
     schema:seeks [
         schema:seller <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
         schema:priceSpecification [
-            schema:maxPrice 18.5 ;
+            schema:maxPrice 22.5 ;
             schema:priceCurrency "EUR"
         ] ;
         schema:availableAtOrFrom [
             schema:geoWithin [
                 a schema:GeoCircle ;
                 schema:geoMidpoint [
-                    schema:longitude 2.42788 ;
-                    schema:latitude 49.40391
+                    schema:longitude 4.84671 ;
+                    schema:latitude 45.74846
                 ] ;
-                schema:geoRadius 2000
+                schema:geoRadius 3000
             ]
         ] ;
         schema:itemOfferred wd:Q177

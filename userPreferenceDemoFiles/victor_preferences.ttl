@@ -1,7 +1,7 @@
 @prefix schema: <http://schema.org/> .
 @prefix wd: <http://www.wikidata.org/entity/> .
 
-<#me>
+<#userVictor>
     a schema:Person ;
     schema:name "Victor Charpenay" ;
     schema:address [
