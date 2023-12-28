@@ -1,5 +1,7 @@
 package semweb_project2;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.jena.query.QueryExecution;
@@ -35,7 +37,7 @@ public class query {
                              "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) < userMinute) )" +
                              "  FILTER (((?lat - userLat)*110.574)*((?lat - userLat)*110.574) + ((?long - userLon)*111.32*cos)*((?long - userLon)*111.32*0.75)  < disSq)" +
                              "  FILTER (?price <= userLim)" +
-                             "} ORDER BY (((?lat - 49.40391)*110.574)*((?lat - 49.40391)*110.574) +  ((?long - 2.42788)*111.32*0.6507224012742214)*((?long - 2.42788)*111.32*0.75))";
+                             "} ORDER BY (((?lat - userLat)*110.574)*((?lat - userLat)*110.574) +  ((?long - userLon)*111.32*cos)*((?long - userLon)*111.32*0.75))";
 		
 		String datasetURL = "http://localhost:3030/coopcycle_dataset";
 		String sparqlEndpoint = datasetURL + "/sparql";
@@ -58,12 +60,13 @@ public class query {
 		String userDayOfWeek = daysOfWeek[(Integer.parseInt(day)-1)];
 		String userHour = time.split(":")[0];
 		String userMinute = time.split(":")[1];
-		System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);  // Output user input
+		System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);
+		scan.close();
 		// We made the following assumptions based on an internet search and testing on google maps
 		// 1 degree of lat = 110.547
 		// 1 degree of lon = 111.32 * cos(lat)
 		Double cos = Math.cos(user.getLatitude() * Math.PI /180);
-		scan.close();
+		user.setTime(userDayOfWeek, Integer.valueOf(userHour), Integer.valueOf(userMinute));
 		
 		// Set the user input as parameters in the query
         queryString = queryString.replaceAll("userDayOfWeek", userDayOfWeek);
@@ -77,16 +80,85 @@ public class query {
         RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
         QueryExecution qExec = conn.query(queryString) ;
 		ResultSet rs = qExec.execSelect() ;
-		while(rs.hasNext()) {
-			QuerySolution soln = rs.nextSolution();
-	        String storeName = soln.getLiteral("storeName").getString();
-	        System.out.println("Store open: " + storeName);
-		}
+		if (rs.hasNext()) {
+			System.out.println();
+			System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);
+			System.out.println();
+			while(rs.hasNext()) {
+				QuerySolution soln = rs.nextSolution();
+		        String storeName = soln.getLiteral("storeName").getString();
+		        System.out.println(storeName);
+			}
+		} else {
+			System.out.println("No options available at that hour");
+		}		
 		qExec.close() ;
+		closestStoresQuery(conn, user);
 		conn.close() ;
-
 	}
 	
-	
+	private static void closestStoresQuery(RDFConnection connection, UserProfile user) {
+		// Create a query string
+        String queryString = "PREFIX schema: <https://schema.org/> " +
+                             "SELECT ?storeName (hours(?opens) as ?openHour) (hours(?closes) as ?closeHour) (minutes(?opens) as ?openMinutes) (minutes(?closes) as ?closeMinutes)" +
+                             "WHERE {" +
+                             "  ?storeUri a schema:ProfessionalService ;" +
+                             "            schema:openingHoursSpecification [ " +
+                             "              a schema:OpeningHoursSpecification ;" +
+                             "              schema:opens ?opens ;" +
+                             "              schema:closes ?closes ;" +
+                             "              schema:dayOfWeek ?dayOfWeek" +
+                             "            ] ;" +
+                             "            schema:location [" +
+                             "                 schema:longitude ?long;" +
+                             "                 schema:latitude ?lat;" +
+                             "            ] ;" +
+                             "            schema:name ?storeName ;" +
+                             "            schema:priceRange ?price ." +
+                             "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
+                             "  FILTER ((hours(?closes) < userHour || (hours(?closes) = userHour && minutes(?closes) < userMinute)) || (hours(?opens) > userHour || (hours(?opens) = userHour && minutes(?opens) > userMinute)))" +
+                             "  FILTER (?price <= userLim)" +
+                             "} ORDER BY (((?lat - userLat)*110.574)*((?lat - userLat)*110.574) +  ((?long - userLon)*111.32*cos)*((?long - userLon)*111.32*0.75))" +
+                             "LIMIT 10";
+		
 
+		Double cos = Math.cos(user.getLatitude() * Math.PI /180);
+        queryString = queryString.replaceAll("userDayOfWeek", user.getDayOfWeek());
+        queryString = queryString.replaceAll("userHour", String.valueOf(user.getHour()));
+        queryString = queryString.replaceAll("userMinute", String.valueOf(user.getMinutes()));
+        queryString = queryString.replaceAll("userLat", Double.toString(user.getLatitude()));
+        queryString = queryString.replaceAll("userLon", Double.toString(user.getLongitude()));
+        queryString = queryString.replaceAll("cos", Double.toString(cos));
+        queryString = queryString.replaceAll("userLim", Double.toString(user.getMaxPrice()));
+        QueryExecution qExec = connection.query(queryString) ;
+		ResultSet rs = qExec.execSelect() ;
+		Map<String, StringBuilder> openPeriodsByStore = new HashMap<>();
+		while(rs.hasNext()) {			
+			QuerySolution soln = rs.nextSolution();
+	        String storeName = soln.getLiteral("storeName").getString();
+	        String hourOpens = soln.getLiteral("openHour").getString();
+	        String hourCloses = soln.getLiteral("closeHour").getString();
+	        String minuteOpens = soln.getLiteral("openMinutes").getString();
+	        String minuteCloses = soln.getLiteral("closeMinutes").getString();
+	        System.out.println("minCloses: " + minuteCloses);
+	        
+	        if (!openPeriodsByStore.containsKey(storeName)) {
+	        	openPeriodsByStore.computeIfAbsent(storeName, k -> new StringBuilder("opened from " + hourOpens + ":" + minuteOpens + " to " + hourCloses + ":" + minuteCloses + "  "));
+	        } else {
+	        	openPeriodsByStore.get(storeName).append("&&  from " + hourOpens + ":" + minuteOpens + " to " + hourCloses + ":" + minuteCloses + "  ");
+	        }
+	        
+	        //System.out.println(storeName + "opened from " + hourOpens + ":" + minuteOpens + " to " + hourCloses + ":" + minuteCloses);
+		}
+		
+		System.out.println();
+		System.out.println("Other options in your price range that open that day:");
+		System.out.println();
+		openPeriodsByStore.forEach((storeName, openPeriods) -> {
+            // Remove the trailing comma and space
+            String result = storeName + " opened " + openPeriods.substring(0, openPeriods.length() - 2);
+            System.out.println(result);
+        });
+		qExec.close() ;
+	}
 }
