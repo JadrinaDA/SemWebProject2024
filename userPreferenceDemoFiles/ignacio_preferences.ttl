@@ -1,29 +1,26 @@
-@prefix schema: <http://schema.org/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
-
 <#userIgnacio>
-    a schema:Person ;
-    schema:name "Ignacio Perez" ;
-    schema:address [
-        a schema:PostalAddress ;
-        schema:postalCode "1842" ;
-        schema:addressLocality "Monte Grande"
+    a <http://schema.org/Person> ;
+    <http://schema.org/name> "Ignacio Perez" ;
+    <http://schema.org/address> [
+        a <http://schema.org/PostalAddress> ;
+        <http://schema.org/postalCode> "1842" ;
+        <http://schema.org/addressLocality> "Monte Grande"
     ] ;
-    schema:seeks [
-        schema:seller <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
-        schema:priceSpecification [
-            schema:maxPrice 13 ;
-            schema:priceCurrency "EUR"
+    <http://schema.org/seeks> [
+        <http://schema.org/seller> <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
+        <http://schema.org/priceSpecification> [
+            <http://schema.org/maxPrice> 13 ;
+            <http://schema.org/priceCurrency> "EUR"
         ] ;
-        schema:availableAtOrFrom [
-            schema:geoWithin [
-                a schema:GeoCircle ;
-                schema:geoMidpoint [
-                    schema:longitude 0 ;
-                    schema:latitude 51.51279
+        <http://schema.org/availableAtOrFrom> [
+            <http://schema.org/geoWithin> [
+                a <http://schema.org/GeoCircle> ;
+                <http://schema.org/geoMidpoint> [
+                    <http://schema.org/longitude> 0 ;
+                    <http://schema.org/latitude> 51.51279
                 ] ;
-                schema:geoRadius 1500
+                <http://schema.org/geoRadius> 1500
             ]
         ] ;
-        schema:itemOfferred wd:Q177
+        <http://schema.org/itemOfferred> <http://www.wikidata.org/entity/Q177>
     ] .

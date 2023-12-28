@@ -1,29 +1,26 @@
-@prefix schema: <http://schema.org/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
-
 <#userAntoine>
-    a schema:Person ;
-    schema:name "Victor Charpenay" ;
-    schema:address [
-        a schema:PostalAddress ;
-        schema:postalCode "38250" ;
-        schema:addressLocality "Corrençon-en-Vercors"
+    a <http://schema.org/Person> ;
+    <http://schema.org/name> "Victor Charpenay" ;
+    <http://schema.org/address> [
+        a <http://schema.org/PostalAddress> ;
+        <http://schema.org/postalCode> "38250" ;
+        <http://schema.org/addressLocality> "Corrençon-en-Vercors"
     ] ;
-    schema:seeks [
-        schema:seller <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
-        schema:priceSpecification [
-            schema:maxPrice 22.5 ;
-            schema:priceCurrency "EUR"
+    <http://schema.org/seeks> [
+        <http://schema.org/seller> <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
+        <http://schema.org/priceSpecification> [
+            <http://schema.org/maxPrice> 22.5 ;
+            <http://schema.org/priceCurrency> "EUR"
         ] ;
-        schema:availableAtOrFrom [
-            schema:geoWithin [
-                a schema:GeoCircle ;
-                schema:geoMidpoint [
-                    schema:longitude 4.84671 ;
-                    schema:latitude 45.74846
+        <http://schema.org/availableAtOrFrom> [
+            <http://schema.org/geoWithin> [
+                a <http://schema.org/GeoCircle> ;
+                <http://schema.org/geoMidpoint> [
+                    <http://schema.org/longitude> 4.84671 ;
+                    <http://schema.org/latitude> 45.74846
                 ] ;
-                schema:geoRadius 3000
+                <http://schema.org/geoRadius> 3000
             ]
         ] ;
-        schema:itemOfferred wd:Q177
+        <http://schema.org/itemOfferred> <http://www.wikidata.org/entity/Q177>
     ] .

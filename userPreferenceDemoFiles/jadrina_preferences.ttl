@@ -1,29 +1,26 @@
-@prefix schema: <http://schema.org/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
-
 <#userJadrina>
-    a schema:Person ;
-    schema:name "Jadrina Andrade" ;
-    schema:address [
-        a schema:PostalAddress ;
-        schema:postalCode "8320000" ;
-        schema:addressLocality "Santiago"
+    a <http://schema.org/Person> ;
+    <http://schema.org/name> "Jadrina Andrade" ;
+    <http://schema.org/address> [
+        a <http://schema.org/PostalAddress> ;
+        <http://schema.org/postalCode> "8320000" ;
+        <http://schema.org/addressLocality> "Santiago"
     ] ;
-    schema:seeks [
-        schema:seller <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
-        schema:priceSpecification [
-            schema:maxPrice 15.5 ;
-            schema:priceCurrency "EUR"
+    <http://schema.org/seeks> [
+        <http://schema.org/seller> <https://coursiers-stephanois.coopcycle.org/api/restaurants/24> ;
+        <http://schema.org/priceSpecification> [
+            <http://schema.org/maxPrice> 15.5 ;
+            <http://schema.org/priceCurrency> "EUR"
         ] ;
-        schema:availableAtOrFrom [
-            schema:geoWithin [
-                a schema:GeoCircle ;
-                schema:geoMidpoint [
-                    schema:longitude -74.00597 ;
-                    schema:latitude 40.71427
+        <http://schema.org/availableAtOrFrom> [
+            <http://schema.org/geoWithin> [
+                a <http://schema.org/GeoCircle> ;
+                <http://schema.org/geoMidpoint> [
+                    <http://schema.org/longitude> -74.00597 ;
+                    <http://schema.org/latitude> 40.71427
                 ] ;
-                schema:geoRadius 500
+                <http://schema.org/geoRadius> 500
             ]
         ] ;
-        schema:itemOfferred wd:Q177
+        <http://schema.org/itemOfferred> <http://www.wikidata.org/entity/Q177>
     ] .
