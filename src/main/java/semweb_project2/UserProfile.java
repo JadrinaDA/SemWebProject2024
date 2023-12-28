@@ -7,6 +7,9 @@ public class UserProfile {
     private int geoRadius;
     private int postalCode;
     private double maxPrice;
+    private String dayOfWeekSelected;
+    private int hourSelected;
+    private int minutesSelected;
 
     // Constructor
     public UserProfile(String userName, double latitude, double longitude,
@@ -17,8 +20,16 @@ public class UserProfile {
         this.geoRadius = geoRadius;
         this.postalCode = postalCode;
         this.maxPrice = maxPrice;
+        this.dayOfWeekSelected = null;
     }
-
+    
+    //Setters
+    public void setTime(String day, int hour, int minutes) {
+    	this.dayOfWeekSelected = day;
+    	this.hourSelected = hour;
+    	this.minutesSelected = minutes;
+    }
+    
     // Getters
     public String getUserName() {
         return userName;
@@ -42,6 +53,18 @@ public class UserProfile {
 
     public double getMaxPrice() {
         return maxPrice;
+    }
+    
+    public String getDayOfWeek() {
+        return dayOfWeekSelected;
+    }
+    
+    public int getHour() {
+        return hourSelected;
+    }
+    
+    public int getMinutes() {
+        return minutesSelected;
     }
 
     // toString method for easy printing
