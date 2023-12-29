@@ -1,0 +1,63 @@
+@prefix dash: <https://datashapes.org/dash#> .
+@prefix rdf: <https://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <https://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix sh: <https://www.w3.org/ns/shacl#> .
+@prefix xsd: <https://www.w3.org/2001/XMLSchema#> .
+
+schema:ServiceShape
+    a sh:NodeShape ;
+    sh:targetClass schema:ProfessionalService;
+    sh:property [
+        sh:path schema:name ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path schema:openingHoursSpecification ;
+        sh:node schema:OHSShape ;
+        sh:minInclusive 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:location ;
+        sh:node schema:LocationShape ;
+    ] .
+    
+ schema:OHSShape
+    a sh:NodeShape ;
+    sh:closed true ;
+    sh:property [
+        sh:path schema:closes ;
+        sh:datatype xsd:string ;
+        sh:minInclusive 1 ;
+        sh:maxInclusive 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:opens ;
+        sh:datatype xsd:string ;
+        sh:minInclusive 1 ;
+        sh:maxInclusive 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:dayOfWeek ;
+        sh:datatype xsd:string ;
+        sh:minInclusive 1 ;
+        sh:maxInclusive 1 ;
+    ] .
+  
+    
+  schema:LocationShape
+    a sh:NodeShape ;
+    sh:closed true ;
+    sh:property [
+        sh:path schema:latitude ;
+        sh:datatype xsd:double;
+        sh:minInclusive 1 ;
+        sh:maxInclusive 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:longitude ;
+        sh:datatype xsd:double;
+        sh:minInclusive 1 ;
+        sh:maxInclusive 1 ;
+    ] .
+    

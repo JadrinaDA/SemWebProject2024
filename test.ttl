@@ -1,0 +1,80 @@
+@prefix schema: <https://schema.org/> .
+
+<https://beefast.coopcycle.org/fr/restaurant/22-moana-poke>
+        a                 schema:ProfessionalService ;
+        schema:location   [ a                 schema:Place ;
+                            schema:address    [ a                       schema:PostalAddress ;
+                                                schema:addressCountry   "FR" ;
+                                                schema:addressLocality  "Amiens"
+                                              ] ;
+                            schema:latitude   "49.8934"^^<http://www.w3.org/2001/XMLSchema#double> ;
+                            schema:longitude  "2.29413"^^<http://www.w3.org/2001/XMLSchema#double>
+                          ] ;
+        schema:name       "Moana Poké 🌺" ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "22:00" ;
+                  schema:dayOfWeek  "Friday" ;
+                  schema:opens      "18:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "14:00" ;
+                  schema:dayOfWeek  "Friday" ;
+                  schema:opens      "11:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "22:00" ;
+                  schema:dayOfWeek  "Thursday" ;
+                  schema:opens      "18:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "14:00" ;
+                  schema:dayOfWeek  "Wednesday" ;
+                  schema:opens      "11:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "22:00" ;
+                  schema:dayOfWeek  "Wednesday" ;
+                  schema:opens      "18:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "14:00" ;
+                  schema:dayOfWeek  "Tuesday" ;
+                  schema:opens      "11:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "22:00" ;
+                  schema:dayOfWeek  "Tuesday" ;
+                  schema:opens      "18:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "14:00" ;
+                  schema:dayOfWeek  "Saturday" ;
+                  schema:opens      "11:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "22:00" ;
+                  schema:dayOfWeek  "Saturday" ;
+                  schema:opens      "18:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "14:00" ;
+                  schema:dayOfWeek  "Thursday" ;
+                  schema:opens      "11:45"
+                ] ;
+        schema:openingHoursSpecification
+                [ a                 schema:OpeningHoursSpecification ;
+                  schema:closes     "14:00" ;
+                  schema:dayOfWeek  "Monday" ;
+                  schema:opens      "11:45"
+                ] ;
+        schema:telephone  "+33674489174" .

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -31,15 +32,28 @@ public class collect {
 		JSONArray o;
 		Model model = ModelFactory.createDefaultModel();
 		String schema = "https://schema.org/";
+		Validator validator = new Validator("shapes.ttl");
 		int counter = 0;
 		
 		try {
 			o = (JSONArray) new JSONParser().parse(new FileReader("coopcycle.json"));
+			//load coopcycle member from uri
+            if (args.length > 0)
+            {
+            	for (String arg: args)
+            	{
+                	JSONObject jsonObj = new JSONObject();
+                	jsonObj.put("coopcycle_url", arg);
+                	jsonObj.put("country", "unknown");
+                	jsonObj.put("city", "unknown");
+            		o.add(0, jsonObj);
+            	}
+            }
 			//for (int i = 0; i < o.size(); i++)
 			for (int i = 0; i < 3; i++)
 			{
 				JSONObject service = (JSONObject) o.get(i);
-				JSONObject text = (JSONObject) service.get("text");
+				//JSONObject text = (JSONObject) service.get("text");
 				String ccurl = "";
 				if (service.get("coopcycle_url") != null)
 				{
@@ -68,6 +82,7 @@ public class collect {
 		            {
 		            	setRI.add(ccurl + restaurantHref.attr("href"));
 		            }
+		           
 
 		            // Iterate over each div element
 		            for (String href : setRI) {
@@ -102,10 +117,20 @@ public class collect {
 		            				JSONArray openingHoursArray = (JSONArray) jsonText.get("openingHoursSpecification");
 
 		            				// Get the price
-		            				JSONObject ETV = (JSONObject)((JSONObject) ((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("eligibleTransactionVolume");
-		            				Double min = Double.parseDouble((String) ETV.get("price"));
-		            				Double delivery = Double.parseDouble((String) ((JSONObject)((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("price"));
-		            				//String price = String.valueOf(min + delivery);
+		            				Double min = 0.0;
+	            					Double delivery = 0.0;
+		            				try {
+			            				JSONObject ETV = (JSONObject)((JSONObject) ((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("eligibleTransactionVolume");
+			            				min = Double.parseDouble((String) ETV.get("price"));
+			            				delivery = Double.parseDouble((String) ((JSONObject)((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("price"));
+			            				//String price = String.valueOf(min + delivery);
+		            				}
+		            				catch (NullPointerException exc)
+		            				{
+		            					System.out.println(exc);
+		            					
+		            				}
+		            				
 		            				
 		            				Resource serv = model.createResource(href)
 								             .addProperty(RDF.type, model.createResource(schema+"ProfessionalService"))
@@ -114,7 +139,8 @@ public class collect {
 		            						 .addProperty(model.createProperty(schema+"telephone"), phone)
 		            						 .addProperty(model.createProperty(schema+"priceRange"), model.createTypedLiteral(min+delivery));
 		            				
-		            				
+		            				Graph temp = serv.getModel().getGraph();
+		            				validator.IsValid(temp);
 		            				
 		            				for (Object openingHoursObject : openingHoursArray) {
 		                                JSONObject openingHours = (JSONObject) openingHoursObject;
@@ -185,13 +211,15 @@ public class collect {
 			e.printStackTrace();
 		}
 		
+		
+		
 		model.write(System.out, "Turtle") ;
 		String datasetURL = "http://localhost:3030/coopcycle_dataset";
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
-		RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
-		conneg.load(model); // add the content of model to the triplestore	
+		//RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
+		//conneg.load(model); // add the content of model to the triplestore	
 
 		
 		// <https://schema.org/closes>     "2022-09-12T14:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
