@@ -12,6 +12,7 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
@@ -131,6 +132,7 @@ public class collect {
 		            					
 		            				}
 		            				
+		            				Model oldmodel = model;
 		            				
 		            				Resource serv = model.createResource(href)
 								             .addProperty(RDF.type, model.createResource(schema+"ProfessionalService"))
@@ -139,9 +141,9 @@ public class collect {
 		            						 .addProperty(model.createProperty(schema+"telephone"), phone)
 		            						 .addProperty(model.createProperty(schema+"priceRange"), model.createTypedLiteral(min+delivery));
 		            				
-		            				Graph temp = serv.getModel().getGraph();
-		            				validator.IsValid(temp);
 		            				
+		            				Resource[] ohSpecs = new Resource[openingHoursArray.size()*7];
+		            				int countO = 0;
 		            				for (Object openingHoursObject : openingHoursArray) {
 		                                JSONObject openingHours = (JSONObject) openingHoursObject;
 		                                List<String> days = (List<String>) openingHours.get("dayOfWeek");
@@ -149,7 +151,6 @@ public class collect {
 		                                String closes = "1999-04-09T" + (String)openingHours.get("closes") +":00";
 		                                
 		                                // Format opening hours for each day
-		                                
 		                                for (String day : days) {
 		                                	Resource ohSpec = model.createResource()
 			                                		 .addProperty(RDF.type, model.createResource(schema+"OpeningHoursSpecification"))
@@ -159,9 +160,25 @@ public class collect {
 
 		                                	ohSpec.addProperty(model.createProperty(schema+"dayOfWeek"), day);
 		                                	serv.addProperty(model.createProperty(schema+"openingHoursSpecification"), ohSpec);
+		                                	ohSpecs[countO] = ohSpec;
+		                                	countO += 1;
 		                                }
 		                                
 		                            }
+		            				
+		            				Graph temp = serv.getModel().getGraph();
+		            				Boolean valid = validator.IsValid(temp);
+		            				if (!valid)
+		            				{
+		            					//https://stackoverflow.com/questions/15213476/build-a-method-to-delete-a-resource-using-jena-api
+		            					model.removeAll(serv, null, (RDFNode) null);
+		            				    model.removeAll(location, null, (RDFNode) null );
+		            				    model.removeAll(address, null, (RDFNode) null);
+		            				    for (int j = 0; j < countO; j++)
+		            				    {
+		            				    	model.removeAll(ohSpecs[j], null, (RDFNode) null);
+		            				    }
+		            				}
 		            				
 		            				
 		                           
@@ -218,8 +235,8 @@ public class collect {
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
-		//RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
-		//conneg.load(model); // add the content of model to the triplestore	
+		RDFConnection conneg = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
+		conneg.load(model); // add the content of model to the triplestore	
 
 		
 		// <https://schema.org/closes>     "2022-09-12T14:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;

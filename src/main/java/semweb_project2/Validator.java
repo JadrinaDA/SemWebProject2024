@@ -37,7 +37,7 @@ public class Validator {
 //	public static void main(String[] args)
 //	{
 //		Validator validator = new Validator("shapes.ttl");
-//		//System.out.println(validator.IsValid("test.ttl"));
+//		System.out.println(validator.IsValid("test.ttl"));
 //	}
 
 }
