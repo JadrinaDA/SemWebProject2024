@@ -1,0 +1,21 @@
+<#userJadrina>  a                   <https://schema.org/Person> ;
+        <https://schema.org/name>   "Jadrina De Andrade" ;
+        <https://schema.org/seeks>  [ <https://schema.org/availabilityStarts>
+                                              "12:00"^^<http://www.w3.org/2001/XMLSchema#time> ;
+                                      <https://schema.org/availableAtOrFrom>
+                                              [ <https://schema.org/geoWithin>  [ a                               <https://schema.org/geoCircle> ;
+                                                                                  <https://schema.org/geoMidpoint>
+                                                                                          [ <https://schema.org/latitude>   "49.9"^^<http://www.w3.org/2001/XMLSchema#double> ;
+                                                                                            <https://schema.org/longitude>  "26.6"^^<http://www.w3.org/2001/XMLSchema#double>
+                                                                                          ] ;
+                                                                                  <https://schema.org/geoRadius>  "10"^^<http://www.w3.org/2001/XMLSchema#int>
+                                                                                ]
+                                              ] ;
+                                      <https://schema.org/dayOfWeek>  "Saturday" ;
+                                      <https://schema.org/priceSpecification>
+                                              [ a                              <https://schema.org/priceSpecification> ;
+                                                <https://schema.org/maxPrice>  "15"^^<http://www.w3.org/2001/XMLSchema#int> ;
+                                                <https://schema.org/priceCurrency>
+                                                        "EUR"
+                                              ]
+                                    ] .
