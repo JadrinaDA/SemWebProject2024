@@ -55,35 +55,60 @@ public class query {
 		String sparqlUpdate = datasetURL + "/update";
 		String graphStore = datasetURL + "/data";
 		
-		Scanner scan = new Scanner(System.in);  // Create a Scanner object
-	    System.out.println("Enter day of week as number:");
+		Double userLat;
+		Double userLon;
+		String userDayOfWeek;
+		String userHour;
+		String userMinute;
+		String userLim;
+		Integer radius;
+		if (args[2].equals("manual"))
+		{
+			Scanner scan = new Scanner(System.in);  // Create a Scanner object
+		    System.out.println("Enter day of week as number:");
 
-	    String day = scan.nextLine();  // Read user input
-	    System.out.println("Enter time (hh:mm)");
-	    String time = scan.nextLine();
-	    String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-		String userDayOfWeek = daysOfWeek[Integer.parseInt(day)];
-		String userHour = time.split(":")[0];
-		String userMinute = time.split(":")[1];
-		System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);  // Output user input
-		
-		System.out.println("Enter your latitude (float)");
-	    String templat = scan.nextLine();
-	    System.out.println("Enter your longitude (float)");
-	    String templon = scan.nextLine();
-		Double userLat = Double.parseDouble(templat);
-		Double userLon = Double.parseDouble(templon);
-		// We made the following assumptions based on an internet search and testing on google maps
-		// 1 degree of lat = 110.547
-		// 1 degree of lon = 111.32 * cos(lat)
-		System.out.println("Enter maximum distance/radius");
-	    String temprad = scan.nextLine();
-		Integer radius = Integer.parseInt(temprad);
+		    String day = scan.nextLine();  // Read user input
+		    System.out.println("Enter time (hh:mm)");
+		    String time = scan.nextLine();
+		    String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+			userDayOfWeek = daysOfWeek[Integer.parseInt(day)];
+			userHour = time.split(":")[0];
+			userMinute = time.split(":")[1];
+			System.out.println("Looking up restaurant for: " + userDayOfWeek + " at " + time);  // Output user input
+			
+			System.out.println("Enter your latitude (float)");
+		    String templat = scan.nextLine();
+		    System.out.println("Enter your longitude (float)");
+		    String templon = scan.nextLine();
+			userLat = Double.parseDouble(templat);
+			userLon = Double.parseDouble(templon);
+			// We made the following assumptions based on an internet search and testing on google maps
+			// 1 degree of lat = 110.547
+			// 1 degree of lon = 111.32 * cos(lat)
+			System.out.println("Enter maximum distance/radius");
+		    String temprad = scan.nextLine();
+			radius = Integer.parseInt(temprad);
+			System.out.println("Enter maximum price");
+			userLim = scan.nextLine();
+			scan.close();
+		}
+		else
+		{
+			Scanner scan = new Scanner(System.in);  // Create a Scanner object
+		    System.out.println("Enter your username:");
+		    String userName = scan.nextLine();  // Read user input
+			readpref readPref = new readpref("user#"+userName);
+			String[] list = readPref.getPreferences(args[2]);
+			userLat = Double.parseDouble(list[0]);
+			userLon = Double.parseDouble(list[1]);
+			radius = Integer.parseInt(list[2]);
+			userLim = list[3];
+			userHour = list[4].split(":")[0];
+			userMinute = list[4].split(":")[1];
+			userDayOfWeek = list[5];
+		}
 		Double cos = Math.cos(userLat * Math.PI /180);
-		System.out.println(cos);
-		System.out.println("Enter maximum price");
-		String userLim = scan.nextLine();
-		scan.close();
+		
 		
 		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
 				// Set the user input as parameters in the query
