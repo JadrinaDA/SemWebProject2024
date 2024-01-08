@@ -1,10 +1,14 @@
 package semweb_project2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdfconnection.RDFConnection;
@@ -32,24 +36,48 @@ public class query {
                              "             ];" +
                              "            schema:name ?storeName ;" +
                              "            schema:priceRange ?price ." +
-                             "  BIND (((?lat - 49.89)*110.574)*((?lat - 49.89)*110.574) +  ((?long - 2.26)*111.32*0.6442571239197948)*((?long - 2.26)*111.32*0.6442571239197948) as ?dist)" +
-                             "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
-                             "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
-                             "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )" +
-                             "  FILTER (?dist  < disSq)" +
-                             "  FILTER (?price <= userLim)";
-        if (args[1].equals("price"))
+                             "  BIND (((?lat - 49.89)*110.574)*((?lat - 49.89)*110.574) +  ((?long - 2.26)*111.32*0.6442571239197948)*((?long - 2.26)*111.32*0.6442571239197948) as ?dist)";
+        String allMatchQS = queryString + "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
+                "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
+                "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )" +
+                "  FILTER (?dist  < disSq)" +
+                "  FILTER (?price <= userLim)";
+        String timeDistMatchQS = queryString + "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
+                "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
+                "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )" +
+                "  FILTER (?dist  < disSq)";
+        String timePriceMatchQS = queryString + "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
+                "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
+                "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )" +
+                "  FILTER (?price <= userLim)";
+        String distPriceMatchQS = queryString +
+                "  FILTER (?dist  < disSq)" +
+                "  FILTER (?price <= userLim)";
+        String justTimeMatchQS = queryString + "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
+                "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
+                "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )";
+        String justDistMatchQS = queryString +
+                "  FILTER (?dist  < disSq)";
+        String justPriceMatchQS = queryString +
+                "  FILTER (?price <= userLim)";
+        String[] queryStrings = {allMatchQS, timeDistMatchQS, timePriceMatchQS, distPriceMatchQS, justTimeMatchQS, justDistMatchQS, justPriceMatchQS};
+        for (int j= 0; j < queryStrings.length; j++)  
+        {
+        	if (args[1].equals("price"))
 			{
-			  queryString +=  "} ORDER BY ?price";	
+			
+        	queryStrings[j] +=  "} ORDER BY ?price";	
 			}
-        else if (args[1].equals("distance"))
-		{
-			queryString +=  "} ORDER BY ?distance";
-		}
-		else
-		{
-			 queryString += "} ORDER BY ?storeName";
-		}
+	        else if (args[1].equals("distance"))
+			{
+	        	queryStrings[j] +=  "} ORDER BY ?distance";
+			}
+			else
+			{
+				queryStrings[j] += "} ORDER BY ?storeName";
+			}
+        }
+        
 		String datasetURL = "http://localhost:3030/coopcycle_dataset";
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
@@ -109,27 +137,38 @@ public class query {
 		}
 		Double cos = Math.cos(userLat * Math.PI /180);
 		
-		
+		List<String> results = new ArrayList<>();
 		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
 				// Set the user input as parameters in the query
-	            queryString = queryString.replaceAll("userDayOfWeek", userDayOfWeek);
-	            queryString = queryString.replaceAll("userHour", userHour);
-	            queryString = queryString.replaceAll("userMinute", userMinute);
-	            queryString = queryString.replaceAll("userLat", Double.toString(userLat));
-	            queryString = queryString.replaceAll("userLon", Double.toString(userLon));
-	            queryString = queryString.replaceAll("cos", Double.toString(cos));
-	            queryString = queryString.replaceAll("disSq", Integer.toString(radius*radius));
-	            queryString = queryString.replaceAll("userLim", userLim);
-	            System.out.println(queryString);
-	            QueryExecution qExec = conn.query(queryString) ;
-				ResultSet rs = qExec.execSelect() ;
-				while(rs.hasNext()) {
-				  QuerySolution qs = rs.next() ;
-				  Resource subject = qs.getResource("storeUri") ;
-				  System.out.println("Subject: " + subject) ;
+				for (int j = 0; j < queryStrings.length; j++)
+				{
+					queryStrings[j] = queryStrings[j].replaceAll("userDayOfWeek", userDayOfWeek);
+					queryStrings[j]= queryStrings[j].replaceAll("userHour", userHour);
+					queryStrings[j] = queryStrings[j].replaceAll("userMinute", userMinute);
+					queryStrings[j] = queryStrings[j].replaceAll("userLat", Double.toString(userLat));
+					queryStrings[j] = queryStrings[j].replaceAll("userLon", Double.toString(userLon));
+					queryStrings[j] = queryStrings[j].replaceAll("cos", Double.toString(cos));
+					queryStrings[j] = queryStrings[j].replaceAll("disSq", Integer.toString(radius*radius));
+					queryStrings[j] = queryStrings[j].replaceAll("userLim", userLim);
+		            System.out.println(queryStrings[j]);
+		            QueryExecution qExec = conn.query(queryStrings[j]) ;
+					ResultSet rs = qExec.execSelect() ;
+					while(rs.hasNext()) {
+					  QuerySolution qs = rs.next() ;
+					  Literal subject = qs.getLiteral("storeName") ;
+					  if (!results.contains(subject.toString()))
+					  {
+						  results.add(subject.toString());
+					  }
+					}
+					qExec.close() ;
+					
 				}
-				qExec.close() ;
 				conn.close() ;
+		for (int k = 0; k < results.size(); k++)
+		{
+			System.out.println(results.get(k));
+		}
 
 	}
 

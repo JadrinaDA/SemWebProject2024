@@ -26,7 +26,7 @@ public class Validator {
 
         // Check initially valid.
         ValidationReport report = ShaclValidator.get().validate(shapes, dataGraph);
-        ShLib.printReport(report);
+        //ShLib.printReport(report);
         if ( ! report.conforms() ) {
             System.out.println("** Initial data does not validate");
             return false;

@@ -46,7 +46,7 @@ public class readpref {
         //System.out.println("Day: " + day);
         
         //System.out.print(userLon.getURI());
-        String[] list = {latitude, longitude, geoRadius, maxPrice, "12:00", "Saturday"};
+        String[] list = {latitude, longitude, geoRadius, "9.0", "22:00", "Saturday"};
         return list;
 
 

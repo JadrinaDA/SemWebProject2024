@@ -50,8 +50,7 @@ public class collect {
             		o.add(0, jsonObj);
             	}
             }
-			//for (int i = 0; i < o.size(); i++)
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < o.size(); i++)
 			{
 				JSONObject service = (JSONObject) o.get(i);
 				//JSONObject text = (JSONObject) service.get("text");
@@ -122,25 +121,30 @@ public class collect {
 	            					Double delivery = 0.0;
 		            				try {
 			            				JSONObject ETV = (JSONObject)((JSONObject) ((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("eligibleTransactionVolume");
-			            				min = Double.parseDouble((String) ETV.get("price"));
-			            				delivery = Double.parseDouble((String) ((JSONObject)((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("price"));
+			            				String minStr = ETV.get("price").toString().replace(",", "");
+			            				min = Double.parseDouble(minStr);
+			            				String delStr = ((JSONObject)((JSONObject)jsonText.get("potentialAction")).get("priceSpecification")).get("price").toString().replace(",", "");
+			            				delivery = Double.parseDouble(delStr);
 			            				//String price = String.valueOf(min + delivery);
 		            				}
 		            				catch (NullPointerException exc)
 		            				{
-		            					System.out.println(exc);
+		            					//System.out.println(exc);
+		            					min = 0.0;
+		     
 		            					
 		            				}
-		            				
-		            				Model oldmodel = model;
 		            				
 		            				Resource serv = model.createResource(href)
 								             .addProperty(RDF.type, model.createResource(schema+"ProfessionalService"))
 								             .addProperty(model.createProperty(schema+"location"), location)
 								             .addProperty(model.createProperty(schema+"name"), name)
-		            						 .addProperty(model.createProperty(schema+"telephone"), phone)
 		            						 .addProperty(model.createProperty(schema+"priceRange"), model.createTypedLiteral(min+delivery));
 		            				
+		            				if (phone != null)
+		            				{
+		            					serv.addProperty(model.createProperty(schema+"telephone"), phone);
+		            				}
 		            				
 		            				Resource[] ohSpecs = new Resource[openingHoursArray.size()*7];
 		            				int countO = 0;
@@ -170,6 +174,7 @@ public class collect {
 		            				Boolean valid = validator.IsValid(temp);
 		            				if (!valid)
 		            				{
+		            					System.out.println("Not valid");
 		            					//https://stackoverflow.com/questions/15213476/build-a-method-to-delete-a-resource-using-jena-api
 		            					model.removeAll(serv, null, (RDFNode) null);
 		            				    model.removeAll(location, null, (RDFNode) null );
@@ -230,7 +235,7 @@ public class collect {
 		
 		
 		
-		model.write(System.out, "Turtle") ;
+		//model.write(System.out, "Turtle") ;
 		String datasetURL = "http://localhost:3030/coopcycle_dataset";
 		String sparqlEndpoint = datasetURL + "/sparql";
 		String sparqlUpdate = datasetURL + "/update";
