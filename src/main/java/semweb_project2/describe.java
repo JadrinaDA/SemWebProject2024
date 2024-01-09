@@ -20,12 +20,18 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class describe {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		// Get preferences and save to Linked data platform
-		String serviceUrl = "http://193.49.165.77:3000/semweb/";
+		String serviceUrl = "http://193.49.165.77:3000/semweb/de-andrade-e-silva-workspace/";
 				
 		// Get preferences from user
 		Scanner scan = new Scanner(System.in);  // Create a Scanner object
@@ -86,8 +92,6 @@ public class describe {
 				.addProperty(model.createProperty(schema+"name"), name)
 				.addProperty(model.createProperty(schema+"seeks"), seeks);
 				
-		//Make connection
-		HttpClient client = HttpClient.newHttpClient();
 		
 		// Put preferences in a temp file
 		OutputStream out;
@@ -100,38 +104,20 @@ public class describe {
 			e1.printStackTrace();
 		}
 		
-//		Path file = Paths.get("temp.ttl");
-//		
-//		// Build request
-//		HttpRequest request;
-//		try {
-//			request = HttpRequest.newBuilder()
-//					  .header("Content-Type", "text/turtle")
-//					  .header("Slug", username)
-//					  .uri(URI.create(serviceUrl))
-//					  .POST(HttpRequest.BodyPublishers.ofFile(file))
-//					  .build();
-//				//Send the request
-//				HttpResponse<String> response;
-//				try {
-//					response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//					if (response.statusCode() == 200)
-//					{
-//						System.out.println("Uploaded preferences correctly.");
-//					}
-//					else
-//					{
-//						System.out.println("There was an error try again.");
-//					}
-//				} catch (IOException | InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		Path file = Paths.get("temp.ttl");
+		
+		// Build request
+		OkHttpClient client = new OkHttpClient().newBuilder()
+				  .build();
+				MediaType mediaType = MediaType.parse("text/turtle");
+				RequestBody body = RequestBody.create(mediaType, file.toFile());
+				Request request = new Request.Builder()
+				  .url("http://193.49.165.77:3000/semweb/de-andrade-e-silva-workspace/")
+				  .method("POST", body)
+				  .addHeader("Content-Type", "text/turtle")
+				  .addHeader("Slug", username+".ttl")
+				  .build();
+				Response response = client.newCall(request).execute();
 		
 
 	}

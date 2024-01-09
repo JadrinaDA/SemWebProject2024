@@ -1,9 +1,12 @@
 package semweb_project2;
 
+import java.util.List;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.RDFDataMgr;
 
 public class readpref {
@@ -18,12 +21,15 @@ public class readpref {
 		// TODO Auto-generated method stub
 		//final String url = "https://www.emse.fr/~zimmermann/Teaching/SemWeb/Project/pref-charpenay.ttl";
         final Model model = ModelFactory.createDefaultModel();
-        model.read(url);
+        model.read(url, "TURTLE");
+        //System.out.println(url);
         //model.write(System.out);
         
+        
         // Fetch information from the RDF model
-        Resource me = model.getResource(url+"#me");
-        String schema = "http://schema.org/";
+        Resource me = model.getResource(url+this.userName);
+        //System.out.println(url+this.userName);
+        String schema = "https://schema.org/";
 
         // Get latitude, longitude, geoRadius, postal code, and maxPrice
         Resource seeks = me.getPropertyResourceValue(model.createProperty(schema + "seeks"));
@@ -35,18 +41,18 @@ public class readpref {
         String longitude = geoMidpoint.getProperty(model.createProperty(schema + "longitude")).getString();
         String geoRadius = geoWithin.getProperty(model.getProperty(schema+"geoRadius")).getString();
         String maxPrice = priceSpec.getProperty(model.getProperty(schema+"maxPrice")).getString();
-        //String time = seeks.getProperty(model.createProperty(schema+"availabilityStarts")).getString();
-        //String day = seeks.getProperty(model.createProperty(schema+"dayOfWeek")).getString();
+        String time = seeks.getProperty(model.createProperty(schema+"availabilityStarts")).getString();
+        String day = seeks.getProperty(model.createProperty(schema+"dayOfWeek")).getString();
         // Print the fetched information
         System.out.println("Latitude: " + latitude);
         System.out.println("Longitude: " + longitude);
         System.out.println("Geo Radius: " + geoRadius);
         System.out.println("Max Price: " + maxPrice);
-        //System.out.println("Time: " + time);
-        //System.out.println("Day: " + day);
+        System.out.println("Time: " + time);
+        System.out.println("Day: " + day);
         
         //System.out.print(userLon.getURI());
-        String[] list = {latitude, longitude, geoRadius, "9.0", "22:00", "Saturday"};
+        String[] list = {latitude, longitude, geoRadius, maxPrice, time, day};
         return list;
 
 

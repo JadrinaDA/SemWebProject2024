@@ -125,8 +125,8 @@ public class query {
 			Scanner scan = new Scanner(System.in);  // Create a Scanner object
 		    System.out.println("Enter your username:");
 		    String userName = scan.nextLine();  // Read user input
-			readpref readPref = new readpref("user#"+userName);
-			String[] list = readPref.getPreferences(args[2]);
+			readpref readPref = new readpref("#user"+userName);
+			String[] list = readPref.getPreferences(args[2]+userName+".ttl");
 			userLat = Double.parseDouble(list[0]);
 			userLon = Double.parseDouble(list[1]);
 			radius = Integer.parseInt(list[2]);
@@ -150,7 +150,7 @@ public class query {
 					queryStrings[j] = queryStrings[j].replaceAll("cos", Double.toString(cos));
 					queryStrings[j] = queryStrings[j].replaceAll("disSq", Integer.toString(radius*radius));
 					queryStrings[j] = queryStrings[j].replaceAll("userLim", userLim);
-		            System.out.println(queryStrings[j]);
+		            //System.out.println(queryStrings[j]);
 		            QueryExecution qExec = conn.query(queryStrings[j]) ;
 					ResultSet rs = qExec.execSelect() ;
 					while(rs.hasNext()) {
