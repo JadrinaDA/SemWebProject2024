@@ -21,7 +21,7 @@ public class query {
 		
 		// Create a query string
         String queryString = "PREFIX schema: <https://schema.org/> " +
-                             "SELECT ?storeUri ?storeName " +
+                             "SELECT ?storeUri ?storeName ?dist" +
                              "WHERE {" +
                              "  ?storeUri a schema:ProfessionalService ;" +
                              "            schema:openingHoursSpecification [ " +
@@ -36,7 +36,7 @@ public class query {
                              "             ];" +
                              "            schema:name ?storeName ;" +
                              "            schema:priceRange ?price ." +
-                             "  BIND (((?lat - 49.89)*110.574)*((?lat - 49.89)*110.574) +  ((?long - 2.26)*111.32*0.6442571239197948)*((?long - 2.26)*111.32*0.6442571239197948) as ?dist)";
+                             "  BIND ((((?lat - userLat)*(?lat - userLat))*110.574) +  (((?long - userLon)*(?long - userLon))*111.32*cos) as ?dist)";
         String allMatchQS = queryString + "  FILTER (?dayOfWeek = \"userDayOfWeek\") " +
                 "  FILTER(hours(?closes) > userHour || (hours(?closes) = userHour && minutes(?closes) >= userMinute) )" +
                 "  FILTER(hours(?opens) < userHour || (hours(?opens) = userHour && minutes(?opens) <= userMinute) )" +
@@ -136,6 +136,7 @@ public class query {
 			userDayOfWeek = list[5];
 		}
 		Double cos = Math.cos(userLat * Math.PI /180);
+		System.out.println(cos);
 		
 		List<String> results = new ArrayList<>();
 		RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint,sparqlUpdate,graphStore);
